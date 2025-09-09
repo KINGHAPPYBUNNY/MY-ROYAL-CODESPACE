@@ -22,15 +22,12 @@
 
   <!-- Open Graph (for Facebook share preview) -->
   <meta property="og:title" content="Wikipedia Edit Statistics" />
-  <meta property="og:description" content="Check edit history stats for any Wikipedia article and share/comment with Facebook plugins." />
+  <meta property="og:description"
+    content="Check edit history stats for any Wikipedia article and share/comment with Facebook plugins." />
   <meta property="og:url" content="https://example.com/wikipedia-edit-stats.html" />
   <meta property="og:type" content="website" />
 
   <style>
-    /* ==========================================================
-       CSS STYLING FOR WIKIPEDIA EDIT STATS + FACEBOOK PLUGIN
-       System Objectives integrated in UI and source code.
-       ========================================================== */
     :root {
       --bg: #0f172a;
       --panel: #111827;
@@ -89,16 +86,76 @@
     .objectives li {
       margin-bottom: 6px;
     }
+
+    .note {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .inputs {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 10px 16px;
+      border-radius: 12px;
+      border: 1px solid #22d3ee55;
+      background: linear-gradient(180deg, #155e75, #0e7490);
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .stat {
+      background: #0b122033;
+      border: 1px solid #33415555;
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .stat .k {
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .stat .l {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .error {
+      background: #7f1d1d;
+      border: 1px solid #ef4444aa;
+      color: #ffe4e6;
+      padding: 10px 12px;
+      border-radius: 12px;
+    }
   </style>
 </head>
 
 <body>
-  <!-- 
-    ==========================
-    📌 OBJECTIVES IN THE UI
-    ==========================
-  -->
+  <!-- Facebook SDK root -->
+  <div id="fb-root"></div>
+
+  <header>
+    <div class="title">
+      <span>🧭 Wikipedia Edit Statistics</span>
+      <span class="note">with Facebook Share, Like & Comments</span>
+    </div>
+    <button id="themeBtn" type="button">🌗 Theme</button>
+  </header>
+
   <main class="wrap">
+
+    <!-- 📌 Project Objectives (User-facing) -->
     <section class="card objectives">
       <h3>📌 Project Objectives</h3>
       <ul>
@@ -108,6 +165,187 @@
         <li>To encourage community engagement by facilitating discussions between Wikipedia editors and Facebook users.</li>
       </ul>
     </section>
+
+    <!-- Query Section -->
+    <section class="card">
+      <div class="inputs">
+        <input id="titleInput" type="text" placeholder="Enter Wikipedia article title (e.g., Nelson Mandela)" />
+        <select id="langSelect">
+          <option value="en" selected>en (English)</option>
+          <option value="de">de (Deutsch)</option>
+          <option value="fr">fr (Français)</option>
+          <option value="es">es (Español)</option>
+          <option value="it">it (Italiano)</option>
+          <option value="pt">pt (Português)</option>
+          <option value="ru">ru (Русский)</option>
+          <option value="ja">ja (日本語)</option>
+          <option value="zh">zh (中文)</option>
+        </select>
+        <button id="fetchBtn" class="btn" type="button">Fetch Stats</button>
+      </div>
+      <div id="status" class="note" style="margin-top:10px;"></div>
+      <div class="stats" id="stats" hidden>
+        <div class="stat">
+          <div class="k" id="totalEdits">—</div>
+          <div class="l">Total Edits</div>
+        </div>
+        <div class="stat">
+          <div class="k" id="uniqueEditors">—</div>
+          <div class="l">Unique Editors</div>
+        </div>
+        <div class="stat">
+          <div class="k" id="firstEdit">—</div>
+          <div class="l">First Edit</div>
+        </div>
+        <div class="stat">
+          <div class="k" id="lastEdit">—</div>
+          <div class="l">Last Edit</div>
+        </div>
+      </div>
+      <div id="details" class="note" style="margin-top:10px;"></div>
+      <div id="error" class="error" hidden></div>
+    </section>
+
+    <!-- Facebook Social Plugins -->
+    <section class="card">
+      <div class="note">Facebook plugins require a public URL. These buttons will use the current page URL once hosted.</div>
+      <div class="fb-share-button" data-href="" data-layout="button_count"></div>
+      <div class="fb-like" data-href="" data-layout="standard" data-action="like" data-size="small" data-share="true"></div>
+      <div class="fb-comments" data-href="" data-width="100%" data-numposts="5"></div>
+    </section>
   </main>
+
+  <!-- Load Facebook SDK -->
+  <script async defer crossorigin="anonymous"
+    src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v19.0"></script>
+
+  <script>
+    // ==========================================================
+    // 📌 JavaScript Functions
+    // Objectives are linked to each block for clarity.
+    // ==========================================================
+
+    // Theme Toggle
+    const themeBtn = document.getElementById('themeBtn');
+    themeBtn.addEventListener('click', () => {
+      const html = document.documentElement;
+      const cur = html.getAttribute('data-theme') || 'light';
+      const next = cur === 'light' ? 'dark' : 'light';
+      html.setAttribute('data-theme', next);
+      themeBtn.textContent = next === 'light' ? '🌗 Theme' : '🌞 Theme';
+    });
+
+    // Objective 4: Facebook community engagement
+    function setFacebookHrefsToCurrentURL() {
+      const url = window.location.href;
+      document.querySelectorAll('.fb-share-button, .fb-like, .fb-comments')
+        .forEach(el => el.setAttribute('data-href', url));
+      if (window.FB && FB.XFBML) FB.XFBML.parse();
+    }
+    document.addEventListener('DOMContentLoaded', setFacebookHrefsToCurrentURL);
+
+    // Objective 1 & 2: Fetch edit history and stats
+    async function fetchAllRevisions(article, lang) {
+      const base = `https://${lang}.wikipedia.org/w/api.php`;
+      const params = new URLSearchParams({
+        action: 'query',
+        prop: 'revisions',
+        titles: article,
+        rvprop: 'timestamp|user',
+        rvlimit: '500',
+        rvdir: 'newer',
+        format: 'json',
+        formatversion: '2',
+        origin: '*'
+      });
+
+      let all = [], continueKey = null;
+      do {
+        const url = base + '?' + params.toString();
+        const res = await fetch(url);
+        const data = await res.json();
+        const pages = data.query?.pages || [];
+        if (!pages.length || pages[0].missing) throw new Error('Article not found.');
+        all = all.concat(pages[0].revisions || []);
+        if (data.continue?.rvcontinue) {
+          continueKey = data.continue.rvcontinue;
+          params.set('rvcontinue', continueKey);
+        } else continueKey = null;
+      } while (continueKey);
+      return all;
+    }
+
+    const fetchBtn = document.getElementById('fetchBtn');
+    const titleInput = document.getElementById('titleInput');
+    const langSelect = document.getElementById('langSelect');
+
+    const elStats = document.getElementById('stats');
+    const elStatus = document.getElementById('status');
+    const elError = document.getElementById('error');
+    const elTotal = document.getElementById('totalEdits');
+    const elUnique = document.getElementById('uniqueEditors');
+    const elFirst = document.getElementById('firstEdit');
+    const elLast = document.getElementById('lastEdit');
+    const elDetails = document.getElementById('details');
+
+    function fmtDate(iso) {
+      try {
+        return new Date(iso).toLocaleString();
+      } catch {
+        return iso;
+      }
+    }
+
+    async function handleFetch() {
+      const article = titleInput.value.trim();
+      const lang = langSelect.value.trim();
+
+      elError.hidden = true;
+      elError.textContent = '';
+      elStats.hidden = true;
+      elStatus.textContent = 'Fetching revisions…';
+      fetchBtn.disabled = true;
+
+      try {
+        if (!article) throw new Error('Please enter an article title.');
+
+        const revisions = await fetchAllRevisions(article, lang);
+        if (!revisions.length) throw new Error('No revisions found.');
+
+        // Objective 1: Show key metrics
+        const totalEdits = revisions.length;
+        const uniqueEditors = new Set(revisions.map(r => r.user)).size;
+        const first = revisions[0];
+        const last = revisions[revisions.length - 1];
+
+        elTotal.textContent = totalEdits.toLocaleString();
+        elUnique.textContent = uniqueEditors.toLocaleString();
+        elFirst.textContent = fmtDate(first.timestamp);
+        elLast.textContent = fmtDate(last.timestamp);
+
+        // Objective 2 & 3: Provide detailed insights + editor profiles
+        elDetails.innerHTML = `
+          <div><strong>Article:</strong> <span class="mono">${article}</span> (${lang}.wikipedia.org)</div>
+          <div><strong>First editor:</strong> ${first.user || '—'}</div>
+          <div><strong>Latest editor:</strong> ${last.user || '—'}</div>
+          <div class="note" style="margin-top:6px;">Showing up to 5,000 edits.</div>
+        `;
+
+        elStats.hidden = false;
+        elStatus.textContent = 'Done.';
+      } catch (err) {
+        elError.hidden = false;
+        elError.textContent = err.message;
+        elStatus.textContent = '';
+      } finally {
+        fetchBtn.disabled = false;
+      }
+    }
+
+    fetchBtn.addEventListener('click', handleFetch);
+    titleInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') handleFetch();
+    });
+  </script>
 </body>
 </html>
