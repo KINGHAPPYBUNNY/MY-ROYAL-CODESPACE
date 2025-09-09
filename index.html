@@ -2,224 +2,255 @@
 <html lang="en" data-theme="light">
 
 <head>
-    <meta charset="UTF-8" />
-    <title>Wikipedia Edit Statistics + Facebook Plugins</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8" />
+  <title>Wikipedia Edit Statistics + Facebook Plugins</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- Open Graph (improves Facebook share preview) -->
-    <meta property="og:title" content="Wikipedia Edit Statistics" />
-    <meta property="og:description" content="Check edit history stats for any Wikipedia article and share/comment with Facebook plugins." />
-    <!-- Replace this with your hosted page URL after deployment -->
-    <meta property="og:url" content="https://example.com/wikipedia-edit-stats.html" />
-    <meta property="og:type" content="website" />
+  <!-- Open Graph (for Facebook share preview) -->
+  <meta property="og:title" content="Wikipedia Edit Statistics" />
+  <meta property="og:description" content="Check edit history stats for any Wikipedia article and share/comment with Facebook plugins." />
+  <meta property="og:url" content="https://example.com/wikipedia-edit-stats.html" />
+  <meta property="og:type" content="website" />
 
-    <style>
-         :root {
-            --bg: #0f172a;
-            --panel: #111827;
-            --text: #e5e7eb;
-            --accent: #22d3ee;
-            --muted: #9ca3af;
-            --ok: #10b981;
-            --warn: #f59e0b;
-            --err: #ef4444;
-        }
-        
-        html[data-theme="light"] {
-            --bg: #f8fafc;
-            --panel: #ffffff;
-            --text: #0f172a;
-            --muted: #334155;
-        }
-        
-        * {
-            box-sizing: border-box;
-        }
-        
-        body {
-            margin: 0;
-            font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
-            color: var(--text);
-            background: radial-gradient(1200px 800px at 20% -20%, #06397022 0%, transparent 70%), radial-gradient(900px 700px at 120% 0%, #1e293b22 0%, transparent 70%), var(--bg);
-            min-height: 100svh;
-        }
-        
-        header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            padding: 16px clamp(16px, 4vw, 32px);
-        }
-        
-        .title {
-            font-weight: 700;
-            letter-spacing: .3px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .badge {
-            font-size: 12px;
-            color: var(--muted);
-        }
-        
-        .theme-toggle {
-            padding: 8px 12px;
-            border: 1px solid #33415555;
-            border-radius: 999px;
-            background: transparent;
-            color: var(--text);
-            cursor: pointer;
-        }
-        
-        .wrap {
-            max-width: 980px;
-            margin: 0 auto;
-            padding: 12px clamp(16px, 4vw, 32px) 40px;
-            display: grid;
-            gap: 16px;
-        }
-        
-        .card {
-            background: color-mix(in oklab, var(--panel) 96%, black 0%);
-            border: 1px solid #33415555;
-            border-radius: 16px;
-            padding: clamp(16px, 3vw, 24px);
-            box-shadow: 0 10px 30px #00000020;
-        }
-        
-        .inputs {
-            display: grid;
-            grid-template-columns: 1fr auto auto;
-            gap: 10px;
-        }
-        
-        @media (max-width: 640px) {
-            .inputs {
-                grid-template-columns: 1fr 1fr;
-            }
-            .inputs button {
-                grid-column: 1 / -1;
-            }
-        }
-        
-        .inputs input,
-        .inputs select {
-            width: 100%;
-            padding: 12px 14px;
-            border-radius: 12px;
-            border: 1px solid #33415555;
-            background: transparent;
-            color: var(--text);
-            outline: none;
-        }
-        
-        .inputs input::placeholder {
-            color: #94a3b8;
-        }
-        
-        .btn {
-            padding: 12px 16px;
-            border-radius: 12px;
-            border: 1px solid #22d3ee55;
-            background: linear-gradient(180deg, #155e75, #0e7490);
-            color: white;
-            cursor: pointer;
-            font-weight: 600;
-        }
-        
-        .btn:disabled {
-            opacity: .6;
-            cursor: not-allowed;
-        }
-        
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-        }
-        
-        @media (max-width: 820px) {
-            .stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .stats {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        .stat {
-            background: #0b122033;
-            border: 1px solid #33415555;
-            border-radius: 12px;
-            padding: 14px;
-        }
-        
-        .stat .k {
-            font-size: 22px;
-            font-weight: 800;
-        }
-        
-        .stat .l {
-            font-size: 12px;
-            color: var(--muted);
-        }
-        
-        .hr {
-            height: 1px;
-            background: #33415555;
-            margin: 14px 0;
-            border-radius: 1px;
-        }
-        
-        .mono {
-            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-        }
-        
-        .note {
-            color: var(--muted);
-            font-size: 13px;
-        }
-        /* Facebook block */
-        
-        .fb-block {
-            display: grid;
-            gap: 12px;
-        }
-        
-        .error {
-            background: #7f1d1d;
-            border: 1px solid #ef4444aa;
-            color: #ffe4e6;
-            padding: 10px 12px;
-            border-radius: 12px;
-        }
-    </style>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --text: #e5e7eb;
+      --accent: #22d3ee;
+      --muted: #9ca3af;
+    }
+
+    html[data-theme="light"] {
+      --bg: #f8fafc;
+      --panel: #ffffff;
+      --text: #0f172a;
+      --muted: #334155;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text);
+      background: radial-gradient(1200px 800px at 20% -20%, #06397022 0%, transparent 70%),
+        radial-gradient(900px 700px at 120% 0%, #1e293b22 0%, transparent 70%),
+        var(--bg);
+      min-height: 100vh;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px clamp(16px, 4vw, 32px);
+    }
+
+    .title {
+      font-weight: 700;
+      letter-spacing: .3px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .theme-toggle {
+      padding: 8px 12px;
+      border: 1px solid #33415555;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 12px clamp(16px, 4vw, 32px) 40px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .card {
+      background: color-mix(in oklab, var(--panel) 96%, black 0%);
+      border: 1px solid #33415555;
+      border-radius: 16px;
+      padding: clamp(16px, 3vw, 24px);
+      box-shadow: 0 10px 30px #00000020;
+    }
+
+    .inputs {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 10px;
+    }
+
+    @media (max-width: 640px) {
+      .inputs {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .inputs button {
+        grid-column: 1 / -1;
+      }
+    }
+
+    .inputs input,
+    .inputs select {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid #33415555;
+      background: transparent;
+      color: var(--text);
+      outline: none;
+    }
+
+    .inputs input::placeholder {
+      color: #94a3b8;
+    }
+
+    .btn {
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid #22d3ee55;
+      background: linear-gradient(180deg, #155e75, #0e7490);
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .btn:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 820px) {
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .stats {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .stat {
+      background: #0b122033;
+      border: 1px solid #33415555;
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .stat .k {
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .stat .l {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .hr {
+      height: 1px;
+      background: #33415555;
+      margin: 14px 0;
+      border-radius: 1px;
+    }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* Objectives section */
+    .objectives {
+      padding: 12px;
+      line-height: 1.6;
+    }
+
+    .objectives h3 {
+      margin-bottom: 8px;
+      font-size: 18px;
+      color: var(--accent);
+    }
+
+    .objectives ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .objectives li {
+      margin-bottom: 6px;
+    }
+
+    /* Facebook block */
+    .fb-block {
+      display: grid;
+      gap: 12px;
+    }
+
+    .error {
+      background: #7f1d1d;
+      border: 1px solid #ef4444aa;
+      color: #ffe4e6;
+      padding: 10px 12px;
+      border-radius: 12px;
+    }
+  </style>
 </head>
 
 <body>
-    <!-- Facebook SDK root -->
-    <div id="fb-root"></div>
+  <!-- Facebook SDK root -->
+  <div id="fb-root"></div>
 
-    <header>
-        <div class="title">
-            <span>🧭 Wikipedia Edit Statistics</span>
-            <span class="badge">with Facebook Share, Like & Comments</span>
-        </div>
-        <button class="theme-toggle" id="themeBtn" type="button">🌗 Theme</button>
-    </header>
+  <header>
+    <div class="title">
+      <span>🧭 Wikipedia Edit Statistics</span>
+      <span class="badge">with Facebook Share, Like & Comments</span>
+    </div>
+    <button class="theme-toggle" id="themeBtn" type="button">🌗 Theme</button>
+  </header>
 
-    <main class="wrap">
-        <!-- Query Card -->
-        <section class="card">
-            <div class="inputs">
-                <input id="titleInput" type="text" placeholder="Enter Wikipedia article title (e.g., Nelson Mandela)" />
-                <select id="langSelect" title="Language">
+  <main class="wrap">
+    <!-- Objectives Section -->
+    <section class="card objectives">
+      <h3>📌 Project Objectives</h3>
+      <ul>
+        <li>To visualize key editing metrics such as top editors, most edited articles, and edit frequency.</li>
+        <li>To provide detailed insights into the edit history and contributor statistics of specific Wikipedia articles.</li>
+        <li>To create profiles for top Wikipedia editors, showcasing their contributions and areas of expertise.</li>
+        <li>To encourage community engagement by facilitating discussions between Wikipedia editors and Facebook users.</li>
+      </ul>
+    </section>
+
+    <!-- Query Card -->
+    <section class="card">
+      <div class="inputs">
+        <input id="titleInput" type="text" placeholder="Enter Wikipedia article title (e.g., Nelson Mandela)" />
+        <select id="langSelect" title="Language">
           <option value="en" selected>en (English)</option>
           <option value="de">de (Deutsch)</option>
           <option value="fr">fr (Français)</option>
@@ -230,201 +261,198 @@
           <option value="ja">ja (日本語)</option>
           <option value="zh">zh (中文)</option>
         </select>
-                <button id="fetchBtn" class="btn" type="button">Fetch Stats</button>
-            </div>
-            <div id="status" class="note" style="margin-top:10px;"></div>
-            <div class="hr"></div>
+        <button id="fetchBtn" class="btn" type="button">Fetch Stats</button>
+      </div>
+      <div id="status" class="note" style="margin-top:10px;"></div>
+      <div class="hr"></div>
 
-            <div class="stats" id="stats" hidden>
-                <div class="stat">
-                    <div class="k" id="totalEdits">—</div>
-                    <div class="l">Total Edits</div>
-                </div>
-                <div class="stat">
-                    <div class="k" id="uniqueEditors">—</div>
-                    <div class="l">Unique Editors</div>
-                </div>
-                <div class="stat">
-                    <div class="k" id="firstEdit">—</div>
-                    <div class="l">First Edit</div>
-                </div>
-                <div class="stat">
-                    <div class="k" id="lastEdit">—</div>
-                    <div class="l">Last Edit</div>
-                </div>
-            </div>
+      <div class="stats" id="stats" hidden>
+        <div class="stat">
+          <div class="k" id="totalEdits">—</div>
+          <div class="l">Total Edits</div>
+        </div>
+        <div class="stat">
+          <div class="k" id="uniqueEditors">—</div>
+          <div class="l">Unique Editors</div>
+        </div>
+        <div class="stat">
+          <div class="k" id="firstEdit">—</div>
+          <div class="l">First Edit</div>
+        </div>
+        <div class="stat">
+          <div class="k" id="lastEdit">—</div>
+          <div class="l">Last Edit</div>
+        </div>
+      </div>
 
-            <div id="details" class="note" style="margin-top:10px;"></div>
-            <div id="error" class="error" hidden></div>
-        </section>
+      <div id="details" class="note" style="margin-top:10px;"></div>
+      <div id="error" class="error" hidden></div>
+    </section>
 
-        <!-- Facebook Social Plugins -->
-        <section class="card fb-block">
-            <div class="note">
-                Facebook plugins require this page to be served at a **public URL** (not <span class="mono">file://</span>). The buttons below automatically use the current page URL when hosted.
-            </div>
+    <!-- Facebook Social Plugins -->
+    <section class="card fb-block">
+      <div class="note">
+        Facebook plugins require this page to be served at a <b>public URL</b> (not <span class="mono">file://</span>). The buttons below automatically use the current page URL when hosted.
+      </div>
 
-            <!-- Share Button -->
-            <div class="fb-share-button" data-href="" data-layout="button_count" data-size="">
-                <a target="_blank" rel="noopener" class="fb-xfbml-parse-ignore" href="https://www.facebook.com/sharer/sharer.php?u=">Share</a>
-            </div>
+      <!-- Share Button -->
+      <div class="fb-share-button" data-href="" data-layout="button_count" data-size="">
+        <a target="_blank" rel="noopener" class="fb-xfbml-parse-ignore"
+          href="https://www.facebook.com/sharer/sharer.php?u=">Share</a>
+      </div>
 
-            <!-- Like Button -->
-            <div class="fb-like" data-href="" data-width="" data-layout="standard" data-action="like" data-size="small" data-share="true"></div>
+      <!-- Like Button -->
+      <div class="fb-like" data-href="" data-width="" data-layout="standard" data-action="like" data-size="small"
+        data-share="true"></div>
 
-            <!-- Comments Plugin -->
-            <div class="fb-comments" data-href="" data-width="100%" data-numposts="5" style="max-width:100%;"></div>
-        </section>
-    </main>
+      <!-- Comments Plugin -->
+      <div class="fb-comments" data-href="" data-width="100%" data-numposts="5" style="max-width:100%;"></div>
+    </section>
+  </main>
 
-    <!-- Load Facebook SDK -->
-    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v19.0"></script>
+  <!-- Load Facebook SDK -->
+  <script async defer crossorigin="anonymous"
+    src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v19.0"></script>
 
-    <script>
-        // ---------- Theme toggle ----------
-        const themeBtn = document.getElementById('themeBtn');
-        themeBtn.addEventListener('click', () => {
-            const html = document.documentElement;
-            const cur = html.getAttribute('data-theme') || 'light';
-            const next = cur === 'light' ? 'dark' : 'light';
-            html.setAttribute('data-theme', next);
-            themeBtn.textContent = next === 'light' ? '🌗 Theme' : '🌞 Theme';
-        });
+  <script>
+    // ---------- Theme toggle ----------
+    const themeBtn = document.getElementById('themeBtn');
+    themeBtn.addEventListener('click', () => {
+      const html = document.documentElement;
+      const cur = html.getAttribute('data-theme') || 'light';
+      const next = cur === 'light' ? 'dark' : 'light';
+      html.setAttribute('data-theme', next);
+      themeBtn.textContent = next === 'light' ? '🌗 Theme' : '🌞 Theme';
+    });
 
-        // ---------- Facebook data-href wiring ----------
-        function setFacebookHrefsToCurrentURL() {
-            const url = window.location.href;
-            document.querySelectorAll('.fb-share-button, .fb-like, .fb-comments').forEach(el => {
-                el.setAttribute('data-href', url);
-            });
-            // If the SDK is loaded, reparse to apply new attributes
-            if (window.FB && FB.XFBML && typeof FB.XFBML.parse === 'function') {
-                FB.XFBML.parse();
-            }
-            // update fallback anchor inside share button (for when SDK isn't loaded)
-            const fbShareA = document.querySelector('.fb-share-button a[href*="sharer.php"]');
-            if (fbShareA) fbShareA.href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url);
+    // ---------- Facebook data-href wiring ----------
+    function setFacebookHrefsToCurrentURL() {
+      const url = window.location.href;
+      document.querySelectorAll('.fb-share-button, .fb-like, .fb-comments').forEach(el => {
+        el.setAttribute('data-href', url);
+      });
+      if (window.FB && FB.XFBML && typeof FB.XFBML.parse === 'function') {
+        FB.XFBML.parse();
+      }
+      const fbShareA = document.querySelector('.fb-share-button a[href*="sharer.php"]');
+      if (fbShareA) fbShareA.href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url);
+    }
+    document.addEventListener('DOMContentLoaded', setFacebookHrefsToCurrentURL);
+
+    // ---------- Wikipedia stats ----------
+    const fetchBtn = document.getElementById('fetchBtn');
+    const titleInput = document.getElementById('titleInput');
+    const langSelect = document.getElementById('langSelect');
+
+    const elStats = document.getElementById('stats');
+    const elStatus = document.getElementById('status');
+    const elError = document.getElementById('error');
+    const elTotal = document.getElementById('totalEdits');
+    const elUnique = document.getElementById('uniqueEditors');
+    const elFirst = document.getElementById('firstEdit');
+    const elLast = document.getElementById('lastEdit');
+    const elDetails = document.getElementById('details');
+
+    function fmtDate(iso) {
+      try {
+        const d = new Date(iso);
+        return d.toLocaleString();
+      } catch {
+        return iso;
+      }
+    }
+
+    async function fetchAllRevisions(article, lang) {
+      const base = `https://${lang}.wikipedia.org/w/api.php`;
+      const params = new URLSearchParams({
+        action: 'query',
+        prop: 'revisions',
+        titles: article,
+        rvprop: 'timestamp|user',
+        rvlimit: '500',
+        rvdir: 'newer',
+        format: 'json',
+        formatversion: '2',
+        origin: '*'
+      });
+
+      let continueKey = null;
+      let all = [];
+      let GuardMax = 5000;
+
+      do {
+        const url = base + '?' + params.toString();
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+
+        const pages = data.query && data.query.pages ? data.query.pages : [];
+        if (!pages.length || pages[0].missing) {
+          throw new Error('Article not found.');
         }
-        document.addEventListener('DOMContentLoaded', setFacebookHrefsToCurrentURL);
+        const revs = (pages[0].revisions || []);
+        all = all.concat(revs);
 
-        // ---------- Wikipedia stats ----------
-        const fetchBtn = document.getElementById('fetchBtn');
-        const titleInput = document.getElementById('titleInput');
-        const langSelect = document.getElementById('langSelect');
-
-        const elStats = document.getElementById('stats');
-        const elStatus = document.getElementById('status');
-        const elError = document.getElementById('error');
-        const elTotal = document.getElementById('totalEdits');
-        const elUnique = document.getElementById('uniqueEditors');
-        const elFirst = document.getElementById('firstEdit');
-        const elLast = document.getElementById('lastEdit');
-        const elDetails = document.getElementById('details');
-
-        function fmtDate(iso) {
-            try {
-                const d = new Date(iso);
-                return d.toLocaleString();
-            } catch {
-                return iso;
-            }
+        if (data.continue && data.continue.rvcontinue && all.length < GuardMax) {
+          continueKey = data.continue.rvcontinue;
+          params.set('rvcontinue', continueKey);
+        } else {
+          continueKey = null;
         }
+      } while (continueKey);
 
-        async function fetchAllRevisions(article, lang) {
-            // Wikipedia API (CORS: use origin=*)
-            // We fetch revisions in ascending order (oldest -> newest) so the last item is the latest edit.
-            const base = `https://${lang}.wikipedia.org/w/api.php`;
-            const params = new URLSearchParams({
-                action: 'query',
-                prop: 'revisions',
-                titles: article,
-                rvprop: 'timestamp|user',
-                rvlimit: '500',
-                rvdir: 'newer',
-                format: 'json',
-                formatversion: '2',
-                origin: '*'
-            });
+      return all;
+    }
 
-            let continueKey = null;
-            let all = [];
-            let GuardMax = 5000; // safety cap (you can raise if needed)
+    async function handleFetch() {
+      const article = (titleInput.value || '').trim();
+      const lang = (langSelect.value || 'en').trim();
 
-            do {
-                const url = base + '?' + params.toString();
-                const res = await fetch(url);
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const data = await res.json();
+      elError.hidden = true;
+      elError.textContent = '';
+      elStats.hidden = true;
+      elStatus.textContent = 'Fetching revisions…';
+      fetchBtn.disabled = true;
 
-                const pages = data.query && data.query.pages ? data.query.pages : [];
-                if (!pages.length || pages[0].missing) {
-                    throw new Error('Article not found.');
-                }
-                const revs = (pages[0].revisions || []);
-                all = all.concat(revs);
+      try {
+        if (!article) throw new Error('Please enter an article title.');
 
-                if (data.continue && data.continue.rvcontinue && all.length < GuardMax) {
-                    continueKey = data.continue.rvcontinue;
-                    params.set('rvcontinue', continueKey);
-                } else {
-                    continueKey = null;
-                }
-            } while (continueKey);
+        const revisions = await fetchAllRevisions(article, lang);
+        if (!revisions.length) throw new Error('No revisions found.');
 
-            return all;
-        }
+        const totalEdits = revisions.length;
+        const uniqueEditors = new Set(revisions.map(r => r.user)).size;
+        const first = revisions[0];
+        const last = revisions[revisions.length - 1];
 
-        async function handleFetch() {
-            const article = (titleInput.value || '').trim();
-            const lang = (langSelect.value || 'en').trim();
+        elTotal.textContent = totalEdits.toLocaleString();
+        elUnique.textContent = uniqueEditors.toLocaleString();
+        elFirst.textContent = fmtDate(first.timestamp);
+        elLast.textContent = fmtDate(last.timestamp);
 
-            elError.hidden = true;
-            elError.textContent = '';
-            elStats.hidden = true;
-            elStatus.textContent = 'Fetching revisions…';
-            fetchBtn.disabled = true;
-
-            try {
-                if (!article) throw new Error('Please enter an article title.');
-
-                const revisions = await fetchAllRevisions(article, lang);
-                if (!revisions.length) throw new Error('No revisions found.');
-
-                // Compute stats
-                const totalEdits = revisions.length;
-                const uniqueEditors = new Set(revisions.map(r => r.user)).size;
-                const first = revisions[0];
-                const last = revisions[revisions.length - 1];
-
-                // Update UI
-                elTotal.textContent = totalEdits.toLocaleString();
-                elUnique.textContent = uniqueEditors.toLocaleString();
-                elFirst.textContent = fmtDate(first.timestamp);
-                elLast.textContent = fmtDate(last.timestamp);
-
-                elDetails.innerHTML = `
+        elDetails.innerHTML = `
           <div><strong>Article:</strong> <span class="mono">${article}</span> (${lang}.wikipedia.org)</div>
           <div><strong>First editor:</strong> <span class="mono">${first.user || '—'}</span></div>
           <div><strong>Latest editor:</strong> <span class="mono">${last.user || '—'}</span></div>
           <div class="note" style="margin-top:6px;">Showing up to 5,000 edits for performance. Increase the cap in code if needed.</div>
         `;
 
-                elStats.hidden = false;
-                elStatus.textContent = 'Done.';
-            } catch (err) {
-                elError.hidden = false;
-                elError.textContent = err.message || String(err);
-                elStatus.textContent = '';
-            } finally {
-                fetchBtn.disabled = false;
-            }
-        }
+        elStats.hidden = false;
+        elStatus.textContent = 'Done.';
+      } catch (err) {
+        elError.hidden = false;
+        elError.textContent = err.message || String(err);
+        elStatus.textContent = '';
+      } finally {
+        fetchBtn.disabled = false;
+      }
+    }
 
-        fetchBtn.addEventListener('click', handleFetch);
-        titleInput.addEventListener('keydown', e => {
-            if (e.key === 'Enter') handleFetch();
-        });
-    </script>
+    fetchBtn.addEventListener('click', handleFetch);
+    titleInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') handleFetch();
+    });
+  </script>
 </body>
 
 </html>
