@@ -1,232 +1,154 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
-
 <head>
   <meta charset="UTF-8" />
   <title>Wikipedia Edit Statistics + Facebook Plugins</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-
-  
-
-  <!-- Open Graph (for Facebook share preview) -->
+  <!-- Open Graph (Facebook preview) -->
   <meta property="og:title" content="Wikipedia Edit Statistics" />
-  <meta property="og:description"
-    content="Check edit history stats for any Wikipedia article and share/comment with Facebook plugins." />
-  <meta property="og:url" content="https://example.com/wikipedia-edit-stats.html" />
+  <meta property="og:description" content="Check Wikipedia edit history and share with Facebook plugins." />
   <meta property="og:type" content="website" />
 
   <style>
-    :root {
-      --bg: #0f172a;
-      --panel: #111827;
-      --text: #e5e7eb;
-      --accent: #22d3ee;
-      --muted: #9ca3af;
-    }
-
-    html[data-theme="light"] {
-      --bg: #f8fafc;
-      --panel: #ffffff;
-      --text: #0f172a;
-      --muted: #334155;
-    }
-
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans";
-      color: var(--text);
-      background: var(--bg);
+      font-family: system-ui, Arial, sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
     }
-
     header {
       display: flex;
-      align-items: center;
       justify-content: space-between;
       padding: 16px;
+      background: #111827;
+      color: white;
     }
-
     .wrap {
       max-width: 960px;
       margin: auto;
       padding: 20px;
       display: grid;
-      gap: 16px;
+      gap: 20px;
     }
-
     .card {
-      background: var(--panel);
-      border: 1px solid #33415555;
+      background: white;
+      border: 1px solid #ddd;
       border-radius: 12px;
       padding: 20px;
-      box-shadow: 0 4px 20px #0002;
     }
-
-    .objectives h3 {
-      margin-bottom: 10px;
-      color: var(--accent);
-    }
-
-    .objectives ul {
-      margin: 0;
-      padding-left: 20px;
-    }
-
-    .objectives li {
-      margin-bottom: 6px;
-    }
-
-    .note {
-      font-size: 14px;
-      color: var(--muted);
-    }
-
     .inputs {
       display: grid;
       grid-template-columns: 1fr auto auto;
       gap: 10px;
     }
-
     .btn {
       padding: 10px 16px;
-      border-radius: 12px;
-      border: 1px solid #22d3ee55;
-      background: linear-gradient(180deg, #155e75, #0e7490);
+      border-radius: 8px;
+      border: none;
+      background: #2563eb;
       color: white;
       cursor: pointer;
-      font-weight: 600;
     }
-
     .stats {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 12px;
     }
-
     .stat {
-      background: #0b122033;
-      border: 1px solid #33415555;
-      border-radius: 12px;
-      padding: 14px;
+      background: #f1f5f9;
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
     }
-
-    .stat .k {
-      font-size: 22px;
-      font-weight: 800;
-    }
-
-    .stat .l {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .error {
-      background: #7f1d1d;
-      border: 1px solid #ef4444aa;
-      color: #ffe4e6;
-      padding: 10px 12px;
-      border-radius: 12px;
-    }
+    .stat .k { font-size: 20px; font-weight: bold; }
+    .note { font-size: 14px; color: gray; }
+    .error { color: red; font-weight: bold; }
   </style>
 </head>
 
 <body>
-  <!-- Facebook SDK root -->
+  <!-- Facebook SDK -->
   <div id="fb-root"></div>
 
   <header>
-    <div class="title">
-      <span>🧭 Wikipedia Edit Statistics</span>
-      <span class="note">with Facebook Share, Like & Comments</span>
-    </div>
-    <button id="themeBtn" type="button">🌗 Theme</button>
+    <span>🧭 Wikipedia Edit Statistics</span>
+    <button id="themeBtn">🌗 Theme</button>
   </header>
 
   <main class="wrap">
 
-  
+    <!-- Objectives -->
+    <section class="card">
+      <h3>System Objectives</h3>
+      <ul>
+        <li>📊 Visualize key editing metrics (top editors, most edited articles, edit frequency).</li>
+        <li>🔎 Provide detailed insights into edit history and contributor statistics.</li>
+        <li>👤 Create profiles for top Wikipedia editors (showing contributions & expertise).</li>
+        <li>💬 Encourage community engagement with Facebook share, like, and comments.</li>
+      </ul>
     </section>
 
     <!-- Query Section -->
     <section class="card">
       <div class="inputs">
-        <input id="titleInput" type="text" placeholder="Enter Wikipedia article title (e.g., Nelson Mandela)" />
+        <input id="titleInput" type="text" placeholder="Enter Wikipedia article (e.g., Nelson Mandela)" />
         <select id="langSelect">
-          <option value="en" selected>en (English)</option>
-          <option value="de">de (Deutsch)</option>
-          <option value="fr">fr (Français)</option>
-          <option value="es">es (Español)</option>
-          <option value="it">it (Italiano)</option>
-          <option value="pt">pt (Português)</option>
-          <option value="ru">ru (Русский)</option>
-          <option value="ja">ja (日本語)</option>
-          <option value="zh">zh (中文)</option>
+          <option value="en">English</option>
+          <option value="de">Deutsch</option>
+          <option value="fr">Français</option>
+          <option value="es">Español</option>
         </select>
-        <button id="fetchBtn" class="btn" type="button">Fetch Stats</button>
+        <button id="fetchBtn" class="btn">Fetch Stats</button>
       </div>
-      <div id="status" class="note" style="margin-top:10px;"></div>
+      <div id="status" class="note"></div>
       <div class="stats" id="stats" hidden>
-        <div class="stat">
-          <div class="k" id="totalEdits">—</div>
-          <div class="l">Total Edits</div>
-        </div>
-        <div class="stat">
-          <div class="k" id="uniqueEditors">—</div>
-          <div class="l">Unique Editors</div>
-        </div>
-        <div class="stat">
-          <div class="k" id="firstEdit">—</div>
-          <div class="l">First Edit</div>
-        </div>
-        <div class="stat">
-          <div class="k" id="lastEdit">—</div>
-          <div class="l">Last Edit</div>
-        </div>
+        <div class="stat"><div class="k" id="totalEdits">—</div><div class="l">Total Edits</div></div>
+        <div class="stat"><div class="k" id="uniqueEditors">—</div><div class="l">Unique Editors</div></div>
+        <div class="stat"><div class="k" id="firstEdit">—</div><div class="l">First Edit</div></div>
+        <div class="stat"><div class="k" id="lastEdit">—</div><div class="l">Last Edit</div></div>
       </div>
-      <div id="details" class="note" style="margin-top:10px;"></div>
-      <div id="error" class="error" hidden></div>
+      <div id="articleLink" class="note" style="margin-top:10px;"></div>
+      <div id="error" class="error"></div>
     </section>
 
-    <!-- Facebook Social Plugins -->
+    <!-- Charts -->
     <section class="card">
-      <div class="note">Facebook plugins require a public URL. These buttons will use the current page URL once hosted.</div>
+      <h3>Top Editors (Pie Chart)</h3>
+      <canvas id="pieChart" height="200"></canvas>
+      <h3>Edit Frequency (Bar Chart)</h3>
+      <canvas id="barChart" height="200"></canvas>
+    </section>
+
+    <!-- Facebook Plugins -->
+    <section class="card">
+      <div class="note">Discuss and share insights:</div>
       <div class="fb-share-button" data-href="" data-layout="button_count"></div>
-      <div class="fb-like" data-href="" data-layout="standard" data-action="like" data-size="small" data-share="true"></div>
+      <div class="fb-like" data-href="" data-layout="standard" data-share="true"></div>
       <div class="fb-comments" data-href="" data-width="100%" data-numposts="5"></div>
     </section>
   </main>
 
-  <!-- Load Facebook SDK -->
+  <!-- Facebook SDK -->
   <script async defer crossorigin="anonymous"
     src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v19.0"></script>
 
   <script>
-    // ==========================================================
-    // 📌 JavaScript Functions
-    // Objectives are linked to each block for clarity.
-    // ==========================================================
+    const fetchBtn = document.getElementById('fetchBtn');
+    const titleInput = document.getElementById('titleInput');
+    const langSelect = document.getElementById('langSelect');
+    const elStats = document.getElementById('stats');
+    const elStatus = document.getElementById('status');
+    const elError = document.getElementById('error');
+    const elTotal = document.getElementById('totalEdits');
+    const elUnique = document.getElementById('uniqueEditors');
+    const elFirst = document.getElementById('firstEdit');
+    const elLast = document.getElementById('lastEdit');
+    const elArticleLink = document.getElementById('articleLink');
 
-    // Theme Toggle
-    const themeBtn = document.getElementById('themeBtn');
-    themeBtn.addEventListener('click', () => {
-      const html = document.documentElement;
-      const cur = html.getAttribute('data-theme') || 'light';
-      const next = cur === 'light' ? 'dark' : 'light';
-      html.setAttribute('data-theme', next);
-      themeBtn.textContent = next === 'light' ? '🌗 Theme' : '🌞 Theme';
-    });
+    let pieChart, barChart;
 
-    // Objective 4: Facebook community engagement
-    function setFacebookHrefsToCurrentURL() {
-      const url = window.location.href;
-      document.querySelectorAll('.fb-share-button, .fb-like, .fb-comments')
-        .forEach(el => el.setAttribute('data-href', url));
-      if (window.FB && FB.XFBML) FB.XFBML.parse();
-    }
-    document.addEventListener('DOMContentLoaded', setFacebookHrefsToCurrentURL);
-
-    // Objective 1 & 2: Fetch edit history and stats
     async function fetchAllRevisions(article, lang) {
       const base = `https://${lang}.wikipedia.org/w/api.php`;
       const params = new URLSearchParams({
@@ -241,60 +163,40 @@
         origin: '*'
       });
 
-      let all = [], continueKey = null;
+      let all = [], cont;
       do {
         const url = base + '?' + params.toString();
         const res = await fetch(url);
         const data = await res.json();
         const pages = data.query?.pages || [];
-        if (!pages.length || pages[0].missing) throw new Error('Article not found.');
+        if (!pages.length || pages[0].missing) throw new Error("Article not found.");
         all = all.concat(pages[0].revisions || []);
-        if (data.continue?.rvcontinue) {
-          continueKey = data.continue.rvcontinue;
-          params.set('rvcontinue', continueKey);
-        } else continueKey = null;
-      } while (continueKey);
+        cont = data.continue?.rvcontinue;
+        if (cont) params.set('rvcontinue', cont);
+      } while (cont);
       return all;
     }
 
-    const fetchBtn = document.getElementById('fetchBtn');
-    const titleInput = document.getElementById('titleInput');
-    const langSelect = document.getElementById('langSelect');
-
-    const elStats = document.getElementById('stats');
-    const elStatus = document.getElementById('status');
-    const elError = document.getElementById('error');
-    const elTotal = document.getElementById('totalEdits');
-    const elUnique = document.getElementById('uniqueEditors');
-    const elFirst = document.getElementById('firstEdit');
-    const elLast = document.getElementById('lastEdit');
-    const elDetails = document.getElementById('details');
-
     function fmtDate(iso) {
-      try {
-        return new Date(iso).toLocaleString();
-      } catch {
-        return iso;
-      }
+      return new Date(iso).toLocaleString();
     }
 
     async function handleFetch() {
       const article = titleInput.value.trim();
       const lang = langSelect.value.trim();
 
-      elError.hidden = true;
-      elError.textContent = '';
+      elError.textContent = "";
       elStats.hidden = true;
-      elStatus.textContent = 'Fetching revisions…';
+      elStatus.textContent = "Fetching revisions…";
       fetchBtn.disabled = true;
 
       try {
-        if (!article) throw new Error('Please enter an article title.');
+        if (!article) throw new Error("Please enter an article title.");
 
         const revisions = await fetchAllRevisions(article, lang);
-        if (!revisions.length) throw new Error('No revisions found.');
+        if (!revisions.length) throw new Error("No revisions found.");
 
-        // Objective 1: Show key metrics
+        // Stats
         const totalEdits = revisions.length;
         const uniqueEditors = new Set(revisions.map(r => r.user)).size;
         const first = revisions[0];
@@ -304,88 +206,64 @@
         elUnique.textContent = uniqueEditors.toLocaleString();
         elFirst.textContent = fmtDate(first.timestamp);
         elLast.textContent = fmtDate(last.timestamp);
-
-        // Objective 2 & 3: Provide detailed insights + editor profiles
-        elDetails.innerHTML = `
-          <div><strong>Article:</strong> <span class="mono">${article}</span> (${lang}.wikipedia.org)</div>
-          <div><strong>First editor:</strong> ${first.user || '—'}</div>
-          <div><strong>Latest editor:</strong> ${last.user || '—'}</div>
-          <div class="note" style="margin-top:6px;">Showing up to 5,000 edits.</div>
-        `;
-
         elStats.hidden = false;
-        elStatus.textContent = 'Done.';
+
+        // Article link
+        const articleURL = `https://${lang}.wikipedia.org/wiki/${encodeURIComponent(article)}`;
+        elArticleLink.innerHTML = `🔗 <a href="${articleURL}" target="_blank">${articleURL}</a>`;
+
+        // Prepare editor counts
+        const editorCounts = {};
+        revisions.forEach(r => editorCounts[r.user] = (editorCounts[r.user] || 0) + 1);
+        const topEditors = Object.entries(editorCounts)
+          .sort((a,b) => b[1]-a[1])
+          .slice(0, 5);
+
+        // Pie chart (Top editors)
+        if (pieChart) pieChart.destroy();
+        pieChart = new Chart(document.getElementById('pieChart'), {
+          type: 'pie',
+          data: {
+            labels: topEditors.map(e => e[0]),
+            datasets: [{
+              data: topEditors.map(e => e[1]),
+              backgroundColor: ['#ef4444','#3b82f6','#10b981','#f59e0b','#8b5cf6']
+            }]
+          }
+        });
+
+        // Bar chart (Edits per year)
+        const yearCounts = {};
+        revisions.forEach(r => {
+          const year = new Date(r.timestamp).getFullYear();
+          yearCounts[year] = (yearCounts[year] || 0) + 1;
+        });
+        const years = Object.keys(yearCounts).sort();
+        if (barChart) barChart.destroy();
+        barChart = new Chart(document.getElementById('barChart'), {
+          type: 'bar',
+          data: {
+            labels: years,
+            datasets: [{
+              label: 'Edits per Year',
+              data: years.map(y => yearCounts[y]),
+              backgroundColor: '#2563eb'
+            }]
+          },
+          options: { scales: { y: { beginAtZero: true } } }
+        });
+
+        elStatus.textContent = "Done.";
       } catch (err) {
-        elError.hidden = false;
         elError.textContent = err.message;
-        elStatus.textContent = '';
+        elStatus.textContent = "";
       } finally {
         fetchBtn.disabled = false;
       }
     }
 
     fetchBtn.addEventListener('click', handleFetch);
-    titleInput.addEventListener('keydown', e => {
-      if (e.key === 'Enter') handleFetch();
-    });
+    titleInput.addEventListener('keydown', e => { if (e.key==="Enter") handleFetch(); });
   </script>
-  <h2>Pie Chart Example</h2>
-<canvas id="myPieChart" width="400" height="400"></canvas>
-
-<h2>Bar Chart Example</h2>
-<canvas id="myBarChart" width="400" height="400"></canvas>
-<script>
-  // Pie Chart
-  const ctxPie = document.getElementById('myPieChart').getContext('2d');
-  new Chart(ctxPie, {
-    type: 'pie',
-    data: {
-      labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple'],
-      datasets: [{
-        label: 'Votes',
-        data: [12, 19, 3, 5, 2], // Values
-        backgroundColor: [
-          'red',
-          'blue',
-          'yellow',
-          'green',
-          'purple'
-        ]
-      }]
-    }
-  });
-
-  // Bar Chart
-  const ctxBar = document.getElementById('myBarChart').getContext('2d');
-  new Chart(ctxBar, {
-    type: 'bar',
-    data: {
-      labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple'],
-      datasets: [{
-        label: 'Votes',
-        data: [12, 19, 3, 5, 2], // Values
-        backgroundColor: [
-          'red',
-          'blue',
-          'yellow',
-          'green',
-          'purple'
-        ]
-      }]
-    },
-    options: {
-      responsive: true,
-      scales: {
-        y: {
-          beginAtZero: true
-        }
-      }
-    }
-  });
-</script>
-
 </body>
 </html>
-
-
-
