@@ -149,33 +149,42 @@
 
     let pieChart, barChart;
 
-    async function fetchAllRevisions(article, lang) {
-      const base = `https://${lang}.wikipedia.org/w/api.php`;
-      const params = new URLSearchParams({
-        action: 'query',
-        prop: 'revisions',
-        titles: article,
-        rvprop: 'timestamp|user',
-        rvlimit: '1000',
-        rvdir: 'newer',
-        format: 'json',
-        formatversion: '2',
-        origin: '*'
-      });
+    async function fetchAllRevisions(article) {
+  const base = `https://en.wikipedia.org/w/api.php`;
+  const params = new URLSearchParams({
+    action: 'query',
+    prop: 'revisions',
+    titles: article,
+    rvprop: 'timestamp|user',
+    rvlimit: '500',
+    rvdir: 'newer',
+    format: 'json',
+    formatversion: '2',
+    origin: '*'
+  });
 
-      let all = [], cont;
-      do {
-        const url = base + '?' + params.toString();
-        const res = await fetch(url);
-        const data = await res.json();
-        const pages = data.query?.pages || [];
-        if (!pages.length || pages[0].missing) throw new Error("Article not found.");
-        all = all.concat(pages[0].revisions || []);
-        cont = data.continue?.rvcontinue;
-        if (cont) params.set('rvcontinue', cont);
-      } while (cont);
-      return all;
-    }
+  let allRevisions = [];
+  let cont = null;
+
+  do {
+    if (cont) params.set('rvcontinue', cont);
+
+    const url = base + '?' + params.toString();
+    const res = await fetch(url);
+    const data = await res.json();
+
+    const pages = data.query?.pages || [];
+    if (!pages.length || pages[0].missing) throw new Error("Article not found.");
+
+    const revisions = pages[0].revisions || [];
+    allRevisions = allRevisions.concat(revisions);
+
+    cont = data.continue?.rvcontinue || null;  // 🔹 pagination key
+  } while (cont);
+
+  return allRevisions;
+}
+
 
     function fmtDate(iso) {
       return new Date(iso).toLocaleString();
@@ -267,5 +276,6 @@
   </script>
 </body>
 </html>
+
 
 
